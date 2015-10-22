@@ -22,8 +22,8 @@ npm run dev
 To generate app for OSX
 
 ```bash
-npm run mac
-``
+npm run mac 
+```
 
 To generate app for all platforms
 
