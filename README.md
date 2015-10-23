@@ -1,7 +1,9 @@
 # Ledjam Desktop Application
-![Ledjam Logo](https://github.com/luandro/ledjam-radio/blob/master/app/assets/imgs/favicon.png)
+![Ledjam Desktop App](http://i.imgur.com/YVxphYE.png)
 
-## Install
+[![Download the latest release here](http://i.imgur.com/u1Ulxtd.png)](https://github.com/luandro/ledjam-radio/releases)
+
+## Development
 
 Install dependencies.
 
@@ -9,9 +11,7 @@ Install dependencies.
 $ npm install
 ```
 
-## Development
-
-To start Electron and Hot Reload server
+To start Electron and Hot Reload server.
 
 ```bash
 npm run dev
