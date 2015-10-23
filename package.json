@@ -13,7 +13,7 @@
     "start-hot": "HOT=1 NODE_ENV=development electron .",
     "package": "rm -rf ./release && NODE_ENV=production node package.js",
     "mac": "rm -rf ./release && NODE_ENV=production node package.js --package darwin --name 'Ledjam Radio Player' ",
-    "package-all": "npm run package -- --all",
+    "package-all": "npm run package -- --all --name 'Ledjam Radio Player'",
     "dev": "concurrent --kill-others 'npm run start-hot' 'npm run hot-server' "
   },
   "bin": {

@@ -1,5 +1,6 @@
 /* eslint no-path-concat: 0, func-names:0 */
 var app = require('app');
+var path = require('path');
 var BrowserWindow = require('browser-window');
 var Menu = require('menu');
 var Tray = require('tray');
@@ -19,9 +20,9 @@ var appIcon = null;
 
 
 app.on('ready', function() {
-  appIcon = new Tray('./tray.png');
-  appIcon.setHighlightMode(true);
   mainWindow = new BrowserWindow({ width: 1024, height: 728, 'title-bar-style': 'hidden' });
+  appIcon = new Tray(path.join(__dirname, 'tray.png'));
+  appIcon.setHighlightMode(true);
 
   if (process.env.HOT) {
     mainWindow.loadUrl('file://' + __dirname + '/app/hot-dev.html');
