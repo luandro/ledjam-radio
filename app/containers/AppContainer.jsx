@@ -2,8 +2,10 @@ import React from 'react';
 import play from 'play-audio';
 import Spinner from 'react-spinkit';
 import electronOpenLinkInBrowser from 'electron-open-link-in-browser';
+import remote from 'remote';
+const mainWindow = remote.getCurrentWindow();
 
-const audioSrc = play('http://ledjamradio.ice.infomaniak.ch/ledjamradio.mp3');
+const audioSrc = play("http://ledjamradio.ice.infomaniak.ch/ledjamradio.mp3");
 
 export default class AppContainer extends React.Component {
   constructor (props) {
@@ -11,12 +13,13 @@ export default class AppContainer extends React.Component {
     this.state = {
       loading: true,
       muted: false,
-      buffer: 0
+      buffer: 0,
+      restartBuffer: 0
     }
   }
 
   componentDidMount() {
-    this.startPlay()
+    this.startPlay();
   }
 
   render() {
@@ -42,14 +45,25 @@ export default class AppContainer extends React.Component {
   }
 
   restartPlay = () => {
-    console.log("restarting:");
+    console.log("restarting:", this.state.restartBuffer);
     this.setState({
-      loading: true
+      loading: true,
+      restartBuffer: this.state.restartBuffer + 1
     });
+    if (this.state.restartBuffer > 3) {
+      console.log("reloading app")
+      mainWindow.reload();
+    }
     this.startPlay();
   }
+
   startPlay = () => {
     console.log("playing:")
+    setTimeout(() => {
+      if(this.state.loading === true) {
+        this.restartPlay();
+      }
+    }, 8000)
     audioSrc
     .autoplay()
     .on('durationchange', (e) => {
@@ -57,8 +71,6 @@ export default class AppContainer extends React.Component {
         this.setState({
           loading: false
         })
-      } else {
-        return
       }
     })
     .on('pause', (e) => {
@@ -73,9 +85,20 @@ export default class AppContainer extends React.Component {
     })
     .on('progress', (e) => {
       console.log("PROGRESS:", e)
+      if(this.state.loading === true && this.state.buffer > 10) {
+        this.setState({
+          loading: false
+        })
+      }
       this.setState({
         buffer: this.state.buffer + 1
       })
+      const bufferLimit = this.state.buffer;
+      setTimeout(() => {
+        if(bufferLimit === this.state.buffer) {
+          this.restartPlay();
+        }
+      }, 8000)
       console.log("this.state.buffer:", this.state.buffer)
     })
     .on('error', (err) => {

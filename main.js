@@ -20,7 +20,11 @@ var appIcon = null;
 
 
 app.on('ready', function() {
-  mainWindow = new BrowserWindow({ width: 1024, height: 728, 'title-bar-style': 'hidden' });
+  var atomScreen = require('screen');
+  var size = atomScreen.getPrimaryDisplay().workAreaSize;
+  mainWindow = new BrowserWindow({ width: 500, height: (size.height - 50), 'title-bar-style': 'hidden' });
+  mainWindow.setPosition((size.width - 500), 0);
+  mainWindow.setResizable(false);
   appIcon = new Tray(path.join(__dirname, 'tray.png'));
   appIcon.setHighlightMode(true);
 
@@ -42,6 +46,8 @@ app.on('ready', function() {
 
   if (process.env.NODE_ENV === 'development') {
     mainWindow.openDevTools();
+    mainWindow.setSize(700, (size.height - 50));
+    mainWindow.setPosition((size.width - 700), 0);
   }
 
   if (process.platform === 'darwin') {
@@ -117,6 +123,13 @@ app.on('ready', function() {
       }]
     }];
     trayTemplate = [{
+      label: 'Mute',
+      click: function () {
+        console.log('muted')
+      }
+    }, {
+      type: 'separator'
+    }, {
       label: 'Launch app',
       click: function() {
         mainWindow.restore();

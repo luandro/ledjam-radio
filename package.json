@@ -12,7 +12,8 @@
     "start": "electron .",
     "start-hot": "HOT=1 NODE_ENV=development electron .",
     "package": "rm -rf ./release && NODE_ENV=production node package.js",
-    "mac": "rm -rf ./release && NODE_ENV=production node package.js --package darwin --name 'Ledjam Radio Player' ",
+    "build-dmg": "electron-installer-dmg ./release/darwin-x64/Ledjam-darwin-x64/Ledjam.app Ledjam --debug",
+    "mac": "rm -rf ./release && NODE_ENV=production node package.js --package darwin --name 'Ledjam' && npm run build-dmg",
     "package-all": "npm run package -- --all --name 'Ledjam Radio Player'",
     "dev": "concurrent --kill-others 'npm run start-hot' 'npm run hot-server' "
   },
@@ -53,6 +54,7 @@
     "concurrently": "^0.1.1",
     "css-loader": "^0.21.0",
     "del": "^2.0.1",
+    "electron-installer-dmg": "^0.1.0",
     "electron-packager": "^5.0.2",
     "electron-prebuilt": "^0.34.0",
     "electron-rebuild": "^1.0.0",
