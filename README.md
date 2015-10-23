@@ -1,5 +1,6 @@
-# Ledjam Desktop Application
 ![Ledjam Desktop App](http://i.imgur.com/YVxphYE.png)
+
+## Download
 
 [![Download the latest release here](http://i.imgur.com/u1Ulxtd.png)](https://github.com/luandro/ledjam-radio/releases)
 
