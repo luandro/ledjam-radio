@@ -1,6 +1,7 @@
 import React from 'react';
 import play from 'play-audio';
 import Spinner from 'react-spinkit';
+import electronOpenLinkInBrowser from 'electron-open-link-in-browser';
 
 const audioSrc = play('http://ledjamradio.ice.infomaniak.ch/ledjamradio.mp3');
 
@@ -9,7 +10,8 @@ export default class AppContainer extends React.Component {
     super(props);
     this.state = {
       loading: true,
-      muted: false
+      muted: false,
+      buffer: 0
     }
   }
 
@@ -20,6 +22,7 @@ export default class AppContainer extends React.Component {
   render() {
     return (
       <div className="container">
+        <div className="bar"></div>
         <div className="header">
           <img src="assets/imgs/logo.svg" /><h2 className="hidden">Ledjam Radio</h2>
         </div>
@@ -31,24 +34,53 @@ export default class AppContainer extends React.Component {
           </button>
         </div>
         <footer>
-          <p>fork it on <a target="_blank" href="http://github.com/luandro/ledjam-radio"><img src="assets/imgs/github.svg" height="10" /> github</a></p>
-          <p>app by <a target="_blank" href="http://luandro.com">Luandro</a> and streaming from <a target="_blank" href="http://www.ledjamradio.com">Ledjam Radio</a></p>
+          <p>app by <a onClick={electronOpenLinkInBrowser.bind(this)} href="http://luandro.com">Luandro</a> and streaming from <a onClick={electronOpenLinkInBrowser.bind(this)} href="http://www.ledjamradio.com">Ledjam Radio</a></p>
+          <p>on <a href="https://github.com/luandro/ledjam-radio" onClick={electronOpenLinkInBrowser.bind(this, "https://github.com/luandro/ledjam-radio")}><img src="assets/imgs/github.svg" height="10" /> github</a></p>
         </footer>
       </div>
     );
   }
 
+  restartPlay = () => {
+    console.log("restarting:");
+    this.setState({
+      loading: true
+    });
+    this.startPlay();
+  }
   startPlay = () => {
+    console.log("playing:")
     audioSrc
     .autoplay()
-    .on('durationchange', () => {
+    .on('durationchange', (e) => {
+      if(this.state.loading === true) {
+        this.setState({
+          loading: false
+        })
+      } else {
+        return
+      }
+    })
+    .on('pause', (e) => {
+      console.log("PAUSED:", e)
+    })
+    .on('abort', (e) => {
+      console.log("ABORT:", e)
+    })
+    .on('ended', (e) => {
+      console.log("ENDED:", e)
+      this.restartPlay();
+    })
+    .on('progress', (e) => {
+      console.log("PROGRESS:", e)
       this.setState({
-        loading: false
+        buffer: this.state.buffer + 1
       })
+      console.log("this.state.buffer:", this.state.buffer)
     })
     .on('error', (err) => {
       console.log("err:", err);
-      this.startPlay();
+      this.restartPlay();
     })
   }
 

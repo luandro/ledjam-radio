@@ -1,4 +1,13 @@
 @import url(https://fonts.googleapis.com/css?family=Raleway);
+.bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  min-width: 100%;
+  height: 40px;
+  background: rgba(0,0,0,0.5);
+}
 body, html {
   margin: 0;
   padding: 0;
@@ -21,8 +30,8 @@ p {
 }
 
 .container {
-  border: 4.5px solid black;
-  margin: 5%;
+/*  border: 4.5px solid black;
+*/  margin: 5%;
 }
 .header {
   padding: 25px 0;

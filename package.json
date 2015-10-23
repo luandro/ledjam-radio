@@ -11,7 +11,7 @@
     "build": "NODE_ENV=production webpack --config webpack.config.production.js --progress --profile --colors",
     "start": "electron .",
     "start-hot": "HOT=1 NODE_ENV=development electron .",
-    "package": "NODE_ENV=production node package.js",
+    "package": "rm -rf ./release && NODE_ENV=production node package.js",
     "mac": "rm -rf ./release && NODE_ENV=production node package.js --package darwin --name 'Ledjam Radio Player' ",
     "package-all": "npm run package -- --all",
     "dev": "concurrent --kill-others 'npm run start-hot' 'npm run hot-server' "
@@ -78,6 +78,7 @@
   "dependencies": {
     "debug": "2.2.0",
     "electron-debug": "0.2.1",
+    "electron-open-link-in-browser": "^1.0.2",
     "keymirror": "0.1.1",
     "object-assign": "4.0.1",
     "play-audio": "^0.1.0",

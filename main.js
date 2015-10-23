@@ -2,21 +2,26 @@
 var app = require('app');
 var BrowserWindow = require('browser-window');
 var Menu = require('menu');
+var Tray = require('tray');
 var menu;
+var trayMenu;
 var template;
 
 require('electron-debug')();
 require('crash-reporter').start();
 
 var mainWindow = null;
+var appIcon = null;
 
-app.on('window-all-closed', function() {
-  if (process.platform !== 'darwin') app.quit();
-});
+// app.on('window-all-closed', function() {
+//   if (process.platform !== 'darwin') app.quit();
+// });
 
 
 app.on('ready', function() {
-  mainWindow = new BrowserWindow({ width: '100%', height: 728 });
+  appIcon = new Tray('./tray.png');
+  appIcon.setHighlightMode(true);
+  mainWindow = new BrowserWindow({ width: 1024, height: 728, 'title-bar-style': 'hidden' });
 
   if (process.env.HOT) {
     mainWindow.loadUrl('file://' + __dirname + '/app/hot-dev.html');
@@ -26,6 +31,12 @@ app.on('ready', function() {
 
   mainWindow.on('closed', function() {
     mainWindow = null;
+    appIcon = null;
+  });
+
+  mainWindow.on('close', function(e) {
+    e.preventDefault();
+    mainWindow.hide();
   });
 
   if (process.env.NODE_ENV === 'development') {
@@ -34,9 +45,9 @@ app.on('ready', function() {
 
   if (process.platform === 'darwin') {
     template = [{
-      label: 'Electron',
+      label: 'Ledjam Radio',
       submenu: [{
-        label: 'About ElectronReact',
+        label: 'About',
         selector: 'orderFrontStandardAboutPanel:'
       }, {
         type: 'separator'
@@ -46,7 +57,7 @@ app.on('ready', function() {
       }, {
         type: 'separator'
       }, {
-        label: 'Hide ElectronReact',
+        label: 'Hide Ledjam Radio',
         accelerator: 'Command+H',
         selector: 'hide:'
       }, {
@@ -62,37 +73,9 @@ app.on('ready', function() {
         label: 'Quit',
         accelerator: 'Command+Q',
         click: function() {
+          mainWindow.destroy();
           app.quit();
         }
-      }]
-    }, {
-      label: 'Edit',
-      submenu: [{
-        label: 'Undo',
-        accelerator: 'Command+Z',
-        selector: 'undo:'
-      }, {
-        label: 'Redo',
-        accelerator: 'Shift+Command+Z',
-        selector: 'redo:'
-      }, {
-        type: 'separator'
-      }, {
-        label: 'Cut',
-        accelerator: 'Command+X',
-        selector: 'cut:'
-      }, {
-        label: 'Copy',
-        accelerator: 'Command+C',
-        selector: 'copy:'
-      }, {
-        label: 'Paste',
-        accelerator: 'Command+V',
-        selector: 'paste:'
-      }, {
-        label: 'Select All',
-        accelerator: 'Command+A',
-        selector: 'selectAll:'
       }]
     }, {
       label: 'View',
@@ -131,33 +114,26 @@ app.on('ready', function() {
         label: 'Bring All to Front',
         selector: 'arrangeInFront:'
       }]
-    }, {
-      label: 'Help',
-      submenu: [{
-        label: 'Learn More',
-        click: function() {
-          require('shell').openExternal('http://electron.atom.io');
-        }
-      }, {
-        label: 'Documentation',
-        click: function() {
-          require('shell').openExternal('https://github.com/atom/electron/tree/master/docs#readme');
-        }
-      }, {
-        label: 'Community Discussions',
-        click: function() {
-          require('shell').openExternal('https://discuss.atom.io/c/electron');
-        }
-      }, {
-        label: 'Search Issues',
-        click: function() {
-          require('shell').openExternal('https://github.com/atom/electron/issues');
-        }
-      }]
     }];
-
+    trayTemplate = [{
+      label: 'Launch app',
+      click: function() {
+        mainWindow.restore();
+      }
+    }, {
+      type: 'separator'
+    },{
+      label: 'Quit',
+      accelerator: 'Command+Q',
+      click: function() {
+        mainWindow.destroy();
+        app.quit();
+      }
+    }];
     menu = Menu.buildFromTemplate(template);
+    trayMenu = Menu.buildFromTemplate(trayTemplate);
     Menu.setApplicationMenu(menu);
+    appIcon.setContextMenu(trayMenu);
   } else {
     template = [{
       label: '&File',
@@ -192,31 +168,26 @@ app.on('ready', function() {
           mainWindow.toggleDevTools();
         }
       }]
+    }];
+    trayTemplate = [{
+      label: 'Launch app',
+      click: function() {
+        mainWindow.restore();
+      }
     }, {
-      label: 'Help',
-      submenu: [{
-        label: 'Learn More',
-        click: function() {
-          require('shell').openExternal('http://electron.atom.io');
-        }
-      }, {
-        label: 'Documentation',
-        click: function() {
-          require('shell').openExternal('https://github.com/atom/electron/tree/master/docs#readme');
-        }
-      }, {
-        label: 'Community Discussions',
-        click: function() {
-          require('shell').openExternal('https://discuss.atom.io/c/electron');
-        }
-      }, {
-        label: 'Search Issues',
-        click: function() {
-          require('shell').openExternal('https://github.com/atom/electron/issues');
-        }
-      }]
+      type: 'separator'
+    },{
+      label: 'Quit',
+      accelerator: 'Alt+F4',
+      click: function() {
+        mainWindow.destroy();
+        app.quit();
+      }
     }];
     menu = Menu.buildFromTemplate(template);
+    trayMenu = Menu.buildFromTemplate(trayTemplate);
     mainWindow.setMenu(menu);
+    appIcon.setContextMenu(trayMenu);
+
   }
 });
